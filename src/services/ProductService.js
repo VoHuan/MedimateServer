@@ -59,6 +59,15 @@ class ProductService {
             console.error('Error fetching newest products:', error);
         }
     };
+
+    getProductById  = async (productId) => {
+        try {
+            const product = await Product.findByPk(productId);
+            return product;
+        } catch (error) {
+            console.error('Error fetching newest products:', error);
+        }
+    };
 }
 
 module.exports = new ProductService();
