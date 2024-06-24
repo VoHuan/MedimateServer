@@ -1,0 +1,52 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Product = sequelize.define('Product', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  id_category: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_unit: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  name: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING(2000),
+    allowNull: false,
+  },
+  discount_percent: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  image: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+}, {
+  tableName: 'product',
+  timestamps: false, // Nếu bảng của bạn không có cột createdAt và updatedAt
+});
+
+module.exports = Product;
