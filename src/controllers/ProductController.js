@@ -6,10 +6,7 @@ class ProductController{
     getAllProduct = async (req, res, next) =>{
         try {
             const products = await ProductService.getAllProduct();
-            res.status(200).json({
-                message : 'Ok',
-                data: products
-            });
+            res.status(200).json(products);
         } catch (error) {
             console.log(error)
             res.status(500).json({
@@ -25,10 +22,7 @@ class ProductController{
     getNewestProduct = async (req, res, next) =>{
         try {
             const products = await ProductService.getNewestProduct();
-            res.status(200).json({
-                message : 'Ok',
-                data: products
-            });
+            res.status(200).json(products);
         } catch (error) {
             console.log(error)
             res.status(500).json({
@@ -44,10 +38,7 @@ class ProductController{
      getTopDiscountedProducts = async (req, res, next) =>{
         try {
             const products = await ProductService.getTopDiscountedProducts();
-            res.status(200).json({
-                message : 'Ok',
-                data: products
-            });
+            res.status(200).json(products);
         } catch (error) {
             console.log(error)
             res.status(500).json({
@@ -63,10 +54,7 @@ class ProductController{
     getAllDiscountedProducts  = async (req, res, next) => {
         try {
             const products = await ProductService.getTopDiscountedProducts();
-            res.status(200).json({
-                message : 'Ok',
-                data: products
-            });
+            res.status(200).json(products);
         } catch (error) {
             console.log(error)
             res.status(500).json({
@@ -89,10 +77,29 @@ class ProductController{
                     data: null
                 });
             }
-            res.status(200).json({
-                message : 'Ok',
-                data: product
-            });
+            res.status(200).json(product);
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                message : 'Internal Server Error',
+                data: null
+            })
+            next(error);
+        }
+    };
+
+
+    //[GET] /api/product/filter
+    getProductByFilter  = async (req, res, next) => {
+        const keySearch = req.query.keySearch;
+        const categoryId = req.query.categoryId;
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
+        console.log({ keySearch, categoryId, minPrice, maxPrice })
+        try {
+            const products = await ProductService.getProductByFilter( keySearch, categoryId, minPrice, maxPrice );
+            
+            res.status(200).json(products);
         } catch (error) {
             console.log(error)
             res.status(500).json({

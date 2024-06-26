@@ -1,6 +1,6 @@
 // const sequelize = require('../config/database')
 const Product = require('../models/Product');
-
+const { Op } = require('sequelize');
 
 class ProductService {
     //[GET] /api/product
@@ -60,12 +60,38 @@ class ProductService {
         }
     };
 
-    getProductById  = async (productId) => {
+    getProductById = async (productId) => {
         try {
             const product = await Product.findByPk(productId);
             return product;
         } catch (error) {
-            console.error('Error fetching newest products:', error);
+            console.error('Error fetching product by ID:', error);
+        }
+    };
+
+
+    getProductByFilter = async (keySearch, categoryId, minPrice, maxPrice) => {
+        try {
+            
+            // Xây dựng các điều kiện query
+            let whereCondition = {};
+
+            if (keySearch) {
+                whereCondition.name = { [Op.like]: `%${keySearch}%` };
+            }
+
+            if (categoryId !== -1) {
+                whereCondition.id_category = categoryId;
+            }
+
+            whereCondition.price = { [Op.between]: [minPrice, maxPrice] };
+
+            const products = await Product.findAll({ where: whereCondition });
+
+            return products;
+
+        } catch (error) {
+            console.error('Error filtered products:', error);
         }
     };
 }

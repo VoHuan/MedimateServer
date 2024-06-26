@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Product = sequelize.define('Product', {
@@ -24,9 +24,10 @@ const Product = sequelize.define('Product', {
     type: DataTypes.STRING(2000),
     allowNull: false,
   },
-  discount_percent: {
+  discountPercent: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'discount_percent',
   },
   price: {
     type: DataTypes.INTEGER,
