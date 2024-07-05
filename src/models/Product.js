@@ -1,6 +1,7 @@
 const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 
+
 const Product = sequelize.define('Product', {
   id: {
     type: DataTypes.INTEGER,
@@ -15,6 +16,10 @@ const Product = sequelize.define('Product', {
   id_unit: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'unit',
+      key: 'id'
+    }
   },
   name: {
     type: DataTypes.STRING(255),
@@ -49,5 +54,8 @@ const Product = sequelize.define('Product', {
   tableName: 'product',
   timestamps: false, // Nếu bảng của bạn không có cột createdAt và updatedAt
 });
+
+
+
 
 module.exports = Product;

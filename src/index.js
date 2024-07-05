@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const globalErrorHandler = require('../src/controllers/ErrorController');
 
 const sync = require('./scripts/sync')
 
@@ -21,6 +22,8 @@ app.use(express.json());
 //Routes init
 route(app);
 
+//Global Error Handling Middleware
+app.use(globalErrorHandler);
 
 sync();
 
