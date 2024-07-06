@@ -4,14 +4,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --inspect src/index.js"
+    "start": "nodemon --inspect src/index.js",
+    "start_prod": "SET NODE_ENV=production& nodemon --inspect src/index.js"
   },
   "author": "VoHuan",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.10.1",
     "sequelize": "^6.37.3"

@@ -48,7 +48,7 @@ exports.updateCart = asyncErrorWrapper(async (cartData) => {
 exports.deleteCart = asyncErrorWrapper(async (userId, productId) => {
     await Cart.destroy({
         where: { id_user: userId, id_product: productId},
-    })
+    });
 });
 
 

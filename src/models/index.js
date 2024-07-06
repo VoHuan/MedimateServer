@@ -3,6 +3,7 @@ const Product = require('./Product');
 const Unit = require('./Unit');
 const User = require('./User');
 const Cart = require('./Cart');
+const Token = require('./Token');
 
 // Product Associations
 Product.belongsTo(Unit, {
@@ -36,9 +37,16 @@ Cart.belongsTo(Product, {
     foreignKey: 'id_product',
 });
 
+// Token Associations
+Token.belongsTo(User, {
+    foreignKey: 'id_user',
+    onDelete: 'CASCADE' // Nếu user bị xóa, token liên quan cũng sẽ bị xóa
+  });
+
 module.exports = {
     Product,
     Unit,
     User,
     Cart,
+    Token,
 };
