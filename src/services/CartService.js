@@ -1,15 +1,22 @@
-const { Cart } = require('../models/index');
+const { Cart, Product } = require('../models/index');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
 
 
 
 
 exports.getCarts = asyncErrorWrapper(async (userId) => {
-    const carts = await Cart.findAll({ where: { id_user: userId } });
+    const carts = await Cart.findAll({
+        where: { id_user: userId },
+        include: [{
+            model: Product,
+            as: 'product'
+        }],
+        attributes: { exclude: ['id_user', 'id_product',''] } 
+    });
     return carts;
 });
 
-exports.getDistinctProductCount = asyncErrorWrapper(async () => {
+exports.getDistinctProductCount = asyncErrorWrapper(async (userId) => {
     const result = await Cart.findAll({
         where: { id_user: userId },
         attributes: ['id_product'],
@@ -19,35 +26,33 @@ exports.getDistinctProductCount = asyncErrorWrapper(async () => {
     return result.length;
 });
 
-exports.saveCart = asyncErrorWrapper(async (cartData) => {
-    const { id_user, id_product, quantity } = cartData;
+exports.saveCart = asyncErrorWrapper(async (id_user, id_product, quantity) => {
     const [cart, created] = await Cart.findOrCreate({
         where: { id_user, id_product },
         defaults: { quantity } // create with new quantity 
-      });
-  
-      if (!created) {
+    });
+
+    if (!created) {
         //cart.quantity = quantity;
         cart.quantity = cart.quantity + quantity;
         await cart.save();
-      }
-  
-      return  cart;
+    }
+
+    return cart;
 });
 
-exports.updateCart = asyncErrorWrapper(async (cartData) => {
-    const { id_user, id_product, quantity } = cartData;
+exports.updateCart = asyncErrorWrapper(async (id_user, id_product, quantity) => {
     const cart = await Cart.findOne({
         where: { id_user, id_product },
-      });
-      
+    });
+
     cart.quantity = quantity;
     await cart.save();
 });
 
 exports.deleteCart = asyncErrorWrapper(async (userId, productId) => {
     await Cart.destroy({
-        where: { id_user: userId, id_product: productId},
+        where: { id_user: userId, id_product: productId },
     });
 });
 

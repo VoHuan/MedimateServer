@@ -31,7 +31,7 @@ const createSendRespone = async (user, statusCode, res) =>{
 
     //user.password = undefined;
     
-    res.status(statusCode).json(accessToken);
+    res.status(statusCode).json({accessToken});
 };
 
 exports.signup = asyncErrorHandler(async (req, res, next) => {

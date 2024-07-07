@@ -13,7 +13,7 @@ router.route('/')
 
 
 router.route('/:id')
-    .delete(authController.protect, authController.restrict('admin'), cartController.deleteCart)
+    .delete(authController.protect, authController.restrict('admin','user'), cartController.deleteCart)
 
     
 module.exports = router;

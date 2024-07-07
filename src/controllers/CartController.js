@@ -19,13 +19,17 @@ exports.getDistinctProductCount = asyncErrorHandler(async (req, res, next) => {
 
 //[POST] /api/cart
 exports.saveCart = asyncErrorHandler(async (req, res, next) => {
-    const cart = await cartService.saveCart(req.body);
+    const id_user = req.user.id;
+    const {  id_product, quantity } = req.body;
+    const cart = await cartService.saveCart(id_user, id_product, quantity);
     res.status(201).json(cart);
 });
 
 //[PATCH] /api/cart
 exports.updateCart = asyncErrorHandler(async (req, res, next) => {
-    await cartService.updateCart(req.body);
+    const id_user = req.user.id;
+    const {  id_product, quantity } = req.body;
+    await cartService.updateCart(id_user, id_product, quantity);
     res.status(204).end();
 });
 

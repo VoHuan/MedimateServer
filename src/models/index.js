@@ -35,6 +35,7 @@ Cart.belongsTo(User, {
 
 Cart.belongsTo(Product, {
     foreignKey: 'id_product',
+    as: 'product',
 });
 
 // Token Associations
