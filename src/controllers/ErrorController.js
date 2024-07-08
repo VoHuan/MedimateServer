@@ -38,16 +38,28 @@ const validateErrorHandler = (err) =>{
     return new CustomError(msg, 400);
 }
 
+const jsonWebTokenErrorHandler = (err) =>{
+    return new CustomError('Invalid token. Please login agian!', 401);
+}
+
+const tokenJWTExpiredErrorHandler = (err) =>{
+    return new CustomError('JWT token has expired. Please login agian!', 401);
+}
+
 module.exports = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
 
     if (process.env.NODE_ENV === 'development') {
+        if (err.name === 'JsonWebTokenError') err = jsonWebTokenErrorHandler(err);
+        if (err.name === 'TokenExpiredError') err = tokenJWTExpiredErrorHandler(err);
         devErrors(err, res);
     } else if (process.env.NODE_ENV === 'production') {
-        
+        console.log(err.name)
         if (err.name === 'SequelizeUniqueConstraintError') err = uniqueErrorHandler(err);
         if (err.name === 'SequelizeValidationError') err = validateErrorHandler(err);
+        if (err.name === 'JsonWebTokenError') err = jsonWebTokenErrorHandler(err);
+        if (err.name === 'TokenExpiredError') err = tokenJWTExpiredErrorHandler(err);
         prodErrors(err, res);
     }
 }

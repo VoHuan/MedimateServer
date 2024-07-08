@@ -20,7 +20,11 @@ const User = sequelize.define('User', {
     defaultValue: null,
     unique: true,
     validate: {
-      len: 10
+      isVNPhoneNumber(value) {
+        if (!/^(0[3|5|7|8|9])+([0-9]{8})$/.test(value)) {
+          throw new Error('Invalid phone number format');
+        }
+      }
     }
   },
   email: {
@@ -73,7 +77,7 @@ const User = sequelize.define('User', {
   },
   gender: {
     type: DataTypes.INTEGER,
-    defaultValue: null,
+    defaultValue: 1,
   },
   image: {
     type: DataTypes.TEXT,
@@ -90,7 +94,6 @@ const User = sequelize.define('User', {
 }, {
   tableName: 'user',
   timestamps: false,
-  //underscored: true, // Sử dụng dấu gạch dưới cho tên cột (id_role -> id_role)
   defaultScope: {
     // Các truy vấn mặc định sẽ không lấy trường password
     attributes: { exclude: ['password', 'status'] }
