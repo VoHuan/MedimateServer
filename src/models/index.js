@@ -4,6 +4,14 @@ const Unit = require('./Unit');
 const User = require('./User');
 const Cart = require('./Cart');
 const Token = require('./Token');
+const Address = require('./Address');
+const Province = require('./Province');
+const District = require('./District');
+const Ward = require('./Ward');
+const Order = require('./Order');
+const OrderDetail = require('./OrderDetail');
+const Coupon = require('./Coupon');
+const RedeemedCoupon = require('./RedeemedCoupon');
 
 // Product Associations
 Product.belongsTo(Unit, {
@@ -27,6 +35,21 @@ User.hasMany(Cart, {
     onDelete: 'CASCADE', // Xoá các cart item liên quan nếu user bị xoá
 });
 
+User.hasMany(Address, {
+    foreignKey: 'id_user',
+    as: 'addresses',
+    onDelete: 'CASCADE'
+});
+
+User.hasMany(Order, {
+    foreignKey: 'id_user',
+    sourceKey: 'id'
+});
+
+User.hasMany(RedeemedCoupon, { 
+    foreignKey: 'id_user' 
+});
+
 // Cart Associations
 Cart.belongsTo(User, {
     foreignKey: 'id_user',
@@ -42,7 +65,54 @@ Cart.belongsTo(Product, {
 Token.belongsTo(User, {
     foreignKey: 'id_user',
     onDelete: 'CASCADE' // Nếu user bị xóa, token liên quan cũng sẽ bị xóa
-  });
+});
+
+// Address Associations
+Address.belongsTo(User, {
+    foreignKey: 'id_user',
+    as: 'user',
+    onDelete: 'CASCADE'
+});
+
+// Order Associations
+Order.hasMany(OrderDetail, {
+    foreignKey: 'id_order',
+    sourceKey: 'id'
+});
+
+Order.belongsTo(User, {
+    foreignKey: 'id_user',
+    targetKey: 'id',
+    as: 'user',
+});
+
+Order.belongsTo(RedeemedCoupon, {
+    foreignKey: 'id_redeemed_coupon',
+    targetKey: 'id',
+    as: 'redeemed_coupons'
+})
+
+// OrderDetail Associations
+OrderDetail.belongsTo(Order, {
+    foreignKey: 'id_order',
+    targetKey: 'id'
+});
+
+OrderDetail.belongsTo(Product, {
+    foreignKey: 'id_product',
+    as: 'product'
+});
+
+
+// Coupon Associations
+Coupon.hasMany(RedeemedCoupon, { 
+    foreignKey: 'id_coupon' 
+});
+
+
+// RedeemedCoupon Associations
+RedeemedCoupon.belongsTo(Coupon, { foreignKey: 'id_coupon', as: 'coupon' });
+RedeemedCoupon.belongsTo(User, { foreignKey: 'id_user' });
 
 module.exports = {
     Product,
@@ -50,4 +120,12 @@ module.exports = {
     User,
     Cart,
     Token,
+    Address,
+    Province,
+    Ward,
+    District,
+    Order,
+    OrderDetail,
+    Coupon,
+    RedeemedCoupon,
 };

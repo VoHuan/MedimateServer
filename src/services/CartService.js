@@ -1,15 +1,18 @@
-const { Cart, Product } = require('../models/index');
+const { Cart, Product, Unit } = require('../models/index');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
-
-
-
 
 exports.getCarts = asyncErrorWrapper(async (userId) => {
     const carts = await Cart.findAll({
         where: { id_user: userId },
         include: [{
             model: Product,
-            as: 'product'
+            as: 'product',
+            include: [{
+                model: Unit,
+                as: 'unit',
+                attributes: ['name'],
+            }],
+            attributes: ['name','price','image','discountPercent']
         }],
         attributes: { exclude: ['id_user', 'id_product',''] } 
     });
