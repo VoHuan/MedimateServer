@@ -43,4 +43,13 @@ const RedeemedCoupon = sequelize.define('RedeemedCoupon', {
   timestamps: false
 });
 
+
+RedeemedCoupon.beforeFind((options) => {
+  if (!options.where) {
+      options.where = {};
+  }
+  options.where.status = 1;
+});
+
+
 module.exports = RedeemedCoupon;

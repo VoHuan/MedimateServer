@@ -7,6 +7,7 @@ const orderRouter = require('./order');
 const orderDetailRouter = require('./orderDetail');
 const couponRouter = require('./coupon');
 const redeemedCouponRouter = require('./redeemedCoupon');
+const notificateRouter = require('./notificate');
 const CustomError = require('../Utils/CustomError');
 
 
@@ -20,6 +21,7 @@ function route(app) {
     app.use('/api/order-detail', orderDetailRouter);
     app.use('/api/coupon', couponRouter);
     app.use('/api/redeemed-coupons', redeemedCouponRouter);
+    app.use('/api/notification', notificateRouter);
 
 
     app.all('*', (req, res, next) => {

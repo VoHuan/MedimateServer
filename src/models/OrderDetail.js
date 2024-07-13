@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Đảm bảo rằng bạn đã cấu hình đúng file này
+const sequelize = require('../config/database'); 
 
 const OrderDetail = sequelize.define('OrderDetail', {
   id_order: {

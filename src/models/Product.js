@@ -56,6 +56,12 @@ const Product = sequelize.define('Product', {
 });
 
 
+Product.beforeFind((options) => {
+  if (!options.where) {
+      options.where = {};
+  }
+  options.where.status = 1;
+});
 
 
 module.exports = Product;

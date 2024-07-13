@@ -13,6 +13,11 @@ const Order = sequelize.define('Order', {
     allowNull: false,
     require: true,
   },
+  redeemedCouponId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'id_redeemed_coupon'
+  },
   code: {
     type: DataTypes.TEXT,
     allowNull: false,
@@ -43,7 +48,8 @@ const Order = sequelize.define('Order', {
   orderTime: {
     type: DataTypes.DATE,
     allowNull: false,
-    field: 'order_time'
+    field: 'order_time',
+    defaultValue: Date.now()
   },
   note: {
     type: DataTypes.TEXT,
@@ -51,15 +57,18 @@ const Order = sequelize.define('Order', {
   },
   point: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   total: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    require: true
   },
   status: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 2
   },
   userAddress: {
     type: DataTypes.TEXT,

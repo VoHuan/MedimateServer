@@ -12,7 +12,7 @@ exports.getCarts = asyncErrorWrapper(async (userId) => {
                 as: 'unit',
                 attributes: ['name'],
             }],
-            attributes: ['name','price','image','discountPercent']
+            attributes: ['id','name','price','image','discountPercent']
         }],
         attributes: { exclude: ['id_user', 'id_product',''] } 
     });

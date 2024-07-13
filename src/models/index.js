@@ -12,6 +12,7 @@ const Order = require('./Order');
 const OrderDetail = require('./OrderDetail');
 const Coupon = require('./Coupon');
 const RedeemedCoupon = require('./RedeemedCoupon');
+const Notificate = require('./Notificate');
 
 // Product Associations
 Product.belongsTo(Unit, {
@@ -114,6 +115,9 @@ Coupon.hasMany(RedeemedCoupon, {
 RedeemedCoupon.belongsTo(Coupon, { foreignKey: 'id_coupon', as: 'coupon' });
 RedeemedCoupon.belongsTo(User, { foreignKey: 'id_user' });
 
+// Notificate Associations
+Notificate.belongsTo(User, { foreignKey: 'id_user' });
+
 module.exports = {
     Product,
     Unit,
@@ -128,4 +132,5 @@ module.exports = {
     OrderDetail,
     Coupon,
     RedeemedCoupon,
+    Notificate,
 };

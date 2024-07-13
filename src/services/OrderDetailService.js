@@ -1,4 +1,4 @@
-const { OrderDetail, Product, Unit, RedeemedCoupon } = require('../models/index');
+const { OrderDetail, Product, Unit } = require('../models/index');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
 
 exports.getAllOrdersItemByOrderId = asyncErrorWrapper(async (orderId) => {
