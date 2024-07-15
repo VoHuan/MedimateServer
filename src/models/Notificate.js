@@ -30,11 +30,6 @@ const Notificate = sequelize.define('Notificate', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    isSeen: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    },
-
 }, {
     tableName: 'notification',
     timestamps: false,

@@ -14,6 +14,7 @@ exports.getNotificationsByUserId = asyncErrorWrapper(async (userId) => {
     return notifications;
 });
 
+
 //noti to user
 exports.addUserNotification = asyncErrorWrapper(async (userId, notificate) => {
     notificate.id_user = userId;

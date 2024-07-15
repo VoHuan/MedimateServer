@@ -9,6 +9,8 @@ exports.getNotificationsByUserId = asyncErrorHandler(async (req, res, next) => {
     res.status(200).json(notifications);
 });
 
+
+
 //[POST] /api/notification
 //noti to user
 exports.addUserNotification = asyncErrorHandler(async (req, res, next) => {
