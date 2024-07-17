@@ -8,10 +8,11 @@ const Order = sequelize.define('Order', {
     autoIncrement: true,
     allowNull: false
   },
-  id_user: {
+  userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     require: true,
+    field: 'id_user'
   },
   redeemedCouponId: {
     type: DataTypes.INTEGER,
@@ -49,7 +50,7 @@ const Order = sequelize.define('Order', {
     type: DataTypes.DATE,
     allowNull: false,
     field: 'order_time',
-    defaultValue: Date.now()
+    defaultValue: DataTypes.NOW
   },
   note: {
     type: DataTypes.TEXT,

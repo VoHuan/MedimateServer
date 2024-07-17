@@ -1,6 +1,6 @@
 // const sequelize = require('../config/database')
 const { Product, Unit } = require('../models/index');
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
 
 
@@ -45,6 +45,27 @@ exports.getTopDiscountedProducts = asyncErrorWrapper(async () => {
         order: [['discount_percent', 'DESC']] // sort desc
     });
     return products;
+});
+
+//[GET] /api/product/best-selling
+// get top 20 best-selling products
+exports.getTopBestSellingProducts = asyncErrorWrapper(async () => {
+    const products = await Product.findAll({
+        include: [{
+            model: Unit,
+            as: 'unit'
+        }],
+        attributes: {
+            include: [
+                [literal('(SELECT SUM(quantity) FROM order_detail WHERE order_detail.id_product = Product.id)'), 'totalQuantitySold']
+            ],
+            exclude: ['id_unit']
+        },
+        order: [[literal('totalQuantitySold'), 'DESC']],
+        limit: 20
+    });
+
+    return products;ed4e
 });
 
 //[GET] /api/product/discounted

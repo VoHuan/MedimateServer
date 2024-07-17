@@ -7,6 +7,11 @@ const authController = require('../controllers/AuthController');
 
 router.route('/')
     .get(authController.protect, orderController.getAllAddressesByUserId)
-    .post(authController.protect, orderController.createOrder)
+
+router.route('/momo')
+    .post(authController.protect, orderController.createOrderWithMoMo)
+    
+router.route('/cod')
+    .post(authController.protect, orderController.createOrderWithCOD)
 
 module.exports = router;

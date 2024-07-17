@@ -31,6 +31,14 @@ exports.getAllDiscountedProducts = asyncErrorHandler(async (req, res, next) => {
 });
 
 
+//[GET] /api/product/best-selling
+// get top 20 best-selling products
+exports.getTopBestSellingProducts = asyncErrorHandler(async (req, res, next) => {
+    const products = await ProductService.getTopBestSellingProducts();
+    res.status(200).json(products);
+});
+
+
 //[GET] /api/product/:id
 exports.getProductById = asyncErrorHandler(async (req, res, next) => {
     const productId = req.params.id;
