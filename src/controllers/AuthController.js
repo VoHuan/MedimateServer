@@ -53,6 +53,18 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
 });
 
 
+exports.loginWithGoogle = asyncErrorHandler(async (req, res, next) => {
+
+    const { idToken } = req.body;
+
+    const user = await authService.loginWithGoogle(idToken);
+
+    console.log(user);
+    
+    createSendRespone(user, 200, res);  
+    
+});
+
 exports.logout = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user.id;
     await tokenService.destroyToken(userId);

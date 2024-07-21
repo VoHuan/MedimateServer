@@ -46,7 +46,7 @@ const User = sequelize.define('User', {
   },
   confirmPassword: {
     type: DataTypes.VIRTUAL,
-    allowNull: false,
+    allowNull: true,
     validate: {
       notEmpty: true,
       len: [6, 100],
@@ -117,6 +117,13 @@ User.beforeCreate(async (user, options) => {
     user.passwordChangedAt = new Date(Date.now() - 1000);
   } catch (err) {
     throw err;
+  }
+});
+
+User.beforeValidate((user, options) =>{
+  if(user.email){
+    user.password = user.password || null;
+    user.confirmPassword = user.confirmPassword || null;
   }
 });
 
