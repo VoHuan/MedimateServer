@@ -47,12 +47,9 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     const {phone, password} = req.body;
 
     const user = await authService.login(phone, password, next);
-    if (typeof user === 'object' && user instanceof User)
-        //user is User
-        createSendRespone(user, 200, res);  
-    else
-        // user is Error
-        next(user)
+    
+    createSendRespone(user, 200, res);  
+    
 });
 
 
@@ -70,7 +67,10 @@ exports.refreshAccessToken = asyncErrorHandler(async (req, res, next) => {
 
 //Authentication
 exports.protect = asyncErrorHandler(async (req, res, next) => {
-    await authService.protect(req, res, next);
+    const authHeader = req.headers['authorization'];
+    const user = await authService.protect(authHeader);
+    req.user = user; //allow user
+    next(); 
 })
 
 
