@@ -27,6 +27,9 @@ router.route('/momo/info')
 router.route('/momo/callback')
     .post(orderController.handleCallbackMoMoServer)
 
+router.route('/momo/check-order-status')
+    .get(authController.protect, orderController.checkMoMoPayOrderStatus)
+
 
 //*************route of payment with zalopay***************
 router.route('/zalopay')
@@ -36,6 +39,6 @@ router.route('/zalopay/callback')
     .post(orderController.handleCallbackZaloPayServer)
 
 router.route('/zalopay/:app_trans_id')
-    .post(authController.protect, orderController.checkZaloPayOrderStatus)
+    .get(authController.protect, orderController.checkZaloPayOrderStatus)
 
 module.exports = router;

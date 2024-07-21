@@ -153,7 +153,7 @@ const handleUpdateOrderStatus = asyncErrorWrapper(async (orderCode, status) => {
     const order = await getOrderByCode(orderCode);
     if(order){
         order.status = status;
-        await order.save();
+        await order.save(); 
     }
 });
 
@@ -199,15 +199,16 @@ exports.monitorZaloPayOrderStatus = asyncErrorWrapper(async (app_trans_id) => {
             console.log("Checking zalopay order status: ",result.return_code);
 
             if (result.return_code === 1) {
-                await handleUpdateOrderStatus(orderId, 1); 
-                return; 
+                await handleUpdateOrderStatus(orderId, 1);
+                return result.return_code;
             } else if (result.return_code === 2) {
-                await handleUpdateOrderStatus(orderId, 0); 
-                return; 
+                await handleUpdateOrderStatus(orderId, 0);
+                return result.return_code;
             } else if (result.return_code === 3 && Date.now() - startTime < maxDuration) {
                 setTimeout(performCheck, checkInterval);
             } else {
                 await handleUpdateOrderStatus(orderId, 0);
+                return result.return_code;
             }
         } catch (error) {
             console.error(`Error checking ZaloPay order status for order ${orderId}:`, error);
@@ -216,8 +217,45 @@ exports.monitorZaloPayOrderStatus = asyncErrorWrapper(async (app_trans_id) => {
 
     };
 
-    performCheck(); 
+    return await performCheck(); 
 });
+
+
+exports.monitorMoMoOrderStatus = asyncErrorWrapper(async (partnerCode,requestId,orderId) => {
+
+    const checkInterval = 30000; // Kiểm tra mỗi 30 giây
+    const maxDuration = 15 * 60 * 1000; // 15 phút
+    let startTime = Date.now();
+
+    const performCheck = async () => {
+
+        try {
+            const result = await createMomoRequest.checkMoMoOrderStatus(partnerCode,requestId,orderId);
+
+            console.log("Checking momo order status: ",result.resultCode);
+
+            if (result.resultCode === 0 || result.resultCode === 9000)  { 
+                //success
+                await handleUpdateOrderStatus(orderId, 1);
+                return result.resultCode;
+            } else if ((result.resultCode === 1000 || result.resultCode === 7000) && Date.now() - startTime < maxDuration) { 
+                //pending
+                setTimeout(performCheck, checkInterval);
+            } else { 
+                // failed
+                await handleUpdateOrderStatus(orderId, 0);
+                return result.resultCode;
+            }
+        } catch (error) {
+            console.error(`Error checking MoMo order status for order ${orderId}:`, error);
+            await handleUpdateOrderStatus(orderId, 0); 
+        }
+
+    };
+
+    return await performCheck(); 
+});
+
 
 
 
