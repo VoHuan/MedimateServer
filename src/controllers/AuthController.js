@@ -32,13 +32,12 @@ const createSendRespone = async (user, statusCode, res) =>{
 
     //user.password = undefined;
     
-    res.status(statusCode).json({accessToken});
+    res.status(statusCode).json({token: accessToken});
 };
 
 exports.signup = asyncErrorHandler(async (req, res, next) => {
     const newUser = await authService.signup(req.body);
-    //console.log(newUser)
-    createSendRespone(newUser, 201, res);
+    res.status(201).json({status: 201, message: "Register successfully !"})
     
 });
 
@@ -56,14 +55,28 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
 exports.loginWithGoogle = asyncErrorHandler(async (req, res, next) => {
 
     const { idToken } = req.body;
-
     const user = await authService.loginWithGoogle(idToken);
-
-    console.log(user);
-    
     createSendRespone(user, 200, res);  
     
 });
+
+// exports.sendOTP = asyncErrorHandler(async (req, res, next) => {
+
+//     const phoneNumber = req.body.phoneNumber;
+//     const otp = await authService.sendOTP(phoneNumber);
+//     res.status(200).json({otp: otp});
+    
+// });
+
+// exports.verifyOTP = asyncErrorHandler(async (req, res, next) => {
+
+//     const {phoneNumber, otpCode} = req.body;
+//     const result = await authService.verifyOTP(phoneNumber, otpCode);
+//     res.status(204).end();
+    
+// });
+
+
 
 exports.logout = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user.id;

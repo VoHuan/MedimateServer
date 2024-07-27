@@ -16,3 +16,11 @@ exports.updateUser = asyncErrorWrapper(async (userId, userUpdate) => {
         { where: { id: userId } }
     );
 });
+
+
+exports.checkPhoneNumberAlreadyExists = asyncErrorWrapper(async (phoneNumber) => {
+    const user = await User.findOne({where: {phone : phoneNumber}})
+    if(user)
+        return true;
+    return false
+});

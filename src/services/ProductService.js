@@ -65,7 +65,7 @@ exports.getTopBestSellingProducts = asyncErrorWrapper(async () => {
         limit: 20
     });
 
-    return products;ed4e
+    return products;
 });
 
 //[GET] /api/product/discounted

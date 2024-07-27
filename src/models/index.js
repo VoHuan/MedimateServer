@@ -13,6 +13,8 @@ const OrderDetail = require('./OrderDetail');
 const Coupon = require('./Coupon');
 const RedeemedCoupon = require('./RedeemedCoupon');
 const Notificate = require('./Notificate');
+const OTP = require('./RegisterOTP');
+const FirebaseDeviceToken = require('./FirebaseDeviceToken');
 
 // Product Associations
 Product.belongsTo(Unit, {
@@ -133,4 +135,6 @@ module.exports = {
     Coupon,
     RedeemedCoupon,
     Notificate,
+    OTP,
+    FirebaseDeviceToken,
 };

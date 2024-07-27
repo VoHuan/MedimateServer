@@ -1,18 +1,24 @@
-const { User, Token } = require('../models/index');
+const { User, Token, OTP } = require('../models/index');
 const util = require('util');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
 const CustomError = require('../Utils/CustomError');
+const userService = require('../services/UserService');
 
 const { OAuth2Client } = require('google-auth-library');
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
+// const twilio = require('twilio');
+// const twilio_client = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+// const otpGenerator = require('otp-generator');
+
 
 async function verifyGoogleIdToken(idToken) {
     const ticket = await client.verifyIdToken({
         idToken: idToken,
-        audience: GOOGLE_CLIENT_ID, 
+        audience: GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
     const email = payload.email;
@@ -20,7 +26,72 @@ async function verifyGoogleIdToken(idToken) {
     const image = payload.picture;
     return { email, username, image };
 
-}
+};
+
+// Send SMS with TWILIO
+// const generateOtp = () => {
+//     return otpGenerator.generate(6, {
+//         upperCaseAlphabets: false,
+//         specialChars: false,
+//         digits: true,
+//         lowerCaseAlphabets: false,
+//     });
+// };
+
+// exports.sendOTP = asyncErrorWrapper(async (phoneNumber) => {
+//     //Check user is exits
+//     const user = await User.findOne({where: {phone : phoneNumber}})
+//     if (user) {
+//         const error = new CustomError(`The phone number: ${phoneNumber} is already exists !`, 400);
+//         throw error;
+//     }
+
+//     const internationalPhoneNumber = "+84" + phoneNumber.substring(1);
+//     const otp = generateOtp();
+
+//     // //send otp to client
+//     // const result = client.messages.create({
+//     //     body: `Your OTP is: ${otp}`,
+//     //     from: process.env.PHONE_NUMBER,
+//     //     to: internationalPhoneNumber
+//     // });
+
+//     //save otp to DB
+//     const salt = await bcrypt.genSalt(10);
+//     const encryptCode = await bcrypt.hash(otp, salt);
+//     const expiresAt = new Date(Date.now() + 90 * 1000); // expires in 90 seconds
+
+//     await OTP.upsert({
+//         phoneNumber: phoneNumber,
+//         otpCode: encryptCode,
+//         expiresAt: expiresAt
+//     });
+    
+//     return otp;
+
+// });
+
+
+// exports.verifyOTP = asyncErrorWrapper(async (phoneNumber, otpCode) => {
+//     //verify otp
+//     const otp = await OTP.findByPk(phoneNumber);
+//     if (!otp ) {
+//         throw new CustomError(`No otp has been sent `, 400);
+//     }
+    
+//     if ( new Date(Date.now()) > otp.expiresAt) {
+//         throw new CustomError(`OTP has expired!`, 400);
+//     }
+
+//     const isMatch = await bcrypt.compare(otpCode, otp.otpCode);
+//     if (!isMatch) {
+//         throw new CustomError('OTP is invalid!', 400);
+//     }
+
+//     return true;
+// });
+
+
 
 exports.loginWithGoogle = asyncErrorWrapper(async (idToken) => {
     const { email, username, image } = await verifyGoogleIdToken(idToken);

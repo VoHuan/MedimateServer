@@ -3,6 +3,8 @@ const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
 const { addDays } = require('date-fns');
 const { customAlphabet } = require('nanoid');
 
+const notificateService = require('../services/NotificateService');
+
 
 const generateCode = () => {
     const alphabetNanoid  = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
@@ -47,5 +49,14 @@ exports.exchangeCoupon = asyncErrorWrapper(async (userId, coupon) => {
             await user.save();
         }
     }
+
+    //send notification
+    let notificate = {};
+    notificate.id_user = userId;
+    notificate.title = "Quy đổi mã giảm giá thành công!";
+    notificate.content = `Chúc mừng! Bạn đã nhận được mã coupon giảm giá #${code}. Mua sắm ngay để tận dụng ưu đãi. \nƯu đãi có thời hạn, hãy sử dụng ngay!`;
+    notificate.image = coupon.image;
+    notificateService.sendUserNotification(notificate);
+
     return redeemedCoupon;
 });

@@ -1,5 +1,6 @@
 const { Cart, Product, Unit } = require('../models/index');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
+const CustomError = require('../Utils/CustomError');
 
 exports.getCarts = asyncErrorWrapper(async (userId) => {
     const carts = await Cart.findAll({
@@ -12,7 +13,7 @@ exports.getCarts = asyncErrorWrapper(async (userId) => {
                 as: 'unit',
                 attributes: ['name'],
             }],
-            attributes: ['id','name','price','image','discountPercent']
+            attributes: ['id','name','price','image','discountPercent','status']
         }],
         attributes: { exclude: ['id_user', 'id_product',''] } 
     });
@@ -45,9 +46,17 @@ exports.saveCart = asyncErrorWrapper(async (id_user, id_product, quantity) => {
 });
 
 exports.updateCart = asyncErrorWrapper(async (id_user, id_product, quantity) => {
+
+    const product = await Product.findByPk(id_product);
+
     const cart = await Cart.findOne({
         where: { id_user, id_product },
     });
+
+    if(product.quantity < quantity){
+        const error = new CustomError("Requested quantity exceeds available stock",400);
+        throw error;
+    }
 
     cart.quantity = quantity;
     await cart.save();

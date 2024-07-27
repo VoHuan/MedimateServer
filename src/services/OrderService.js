@@ -1,12 +1,14 @@
-const { Order, OrderDetail, User, RedeemedCoupon, Cart, RedeemedCoupone } = require('../models/index');
+const { Order, OrderDetail, User, RedeemedCoupon, Cart, RedeemedCoupone, Product } = require('../models/index');
 const MoMoOrderInfo = require('../models/MoMoOrderInfo');
 const createMomoRequest = require('../Payment/MoMo/CreateMomoRequest');
 const createZaloPayRequest = require('../Payment/ZaloPay/CreateZalopayRequest');
 const asyncErrorWrapper = require('../Utils/AsyncErrorWrapper');
 const { customAlphabet } = require('nanoid');
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 const CustomError = require('../Utils/CustomError');
 const { el } = require('date-fns/locale');
+
+const notificateService = require('../services/NotificateService');
 
 
 
@@ -59,6 +61,16 @@ exports.createOrderWithCOD = asyncErrorWrapper(async (listCartItem, order) => {
     if (newOrder) {
         await handleOrderCompletion(listCartItem, newOrder);
     }
+
+    //order success => send notification
+    await sendUserNotification(     
+        {
+            id_user: order.userId,
+            title: 'Đặt hàng thành công!', 
+            content: `Cảm ơn sự ủng hộ của bạn! Đơn hàng với ${listCartItem.length} sản phẩm đang trên đường đến bạn.`
+        }
+    );
+
     return newOrder;
 });
 
@@ -104,12 +116,20 @@ const handleOrderCompletion = asyncErrorWrapper(async (listCartItem, order) => {
 
     await OrderDetail.bulkCreate(listOrderItem);
 
-    // 2. Cộng điểm thưởng cho người dùng
+    // 2.Cập nhật số lượng sản phẩm trong kho
+    await Promise.all(listOrderItem.map(item =>
+        Product.update(
+            { quantity: literal(`quantity - ${item.quantity}`) }, // Sử dụng literal để tính toán số lượng mới
+            { where: { id: item.id_product } }
+        )
+    ));
+
+    // 3. Cộng điểm thưởng cho người dùng
     const user = await User.findByPk(order.userId);
     user.point += order.point;
     await user.save();
 
-    // 3. Xóa mục giỏ hàng
+    // 4. Xóa mục giỏ hàng
     const productIds = listCartItem.map(item => item.product.id);
     await Cart.destroy({
         where: {
@@ -118,7 +138,7 @@ const handleOrderCompletion = asyncErrorWrapper(async (listCartItem, order) => {
         }
     });
 
-    // 4. Cập nhật mã khuyến mãi đã sử dụng (update status)
+    // 5. Cập nhật mã khuyến mãi đã sử dụng (update status)
     if (order.redeemedCouponId !== 0) {
         const redeemedCoupon = await RedeemedCoupon.findByPk(order.redeemedCouponId);
         if (!redeemedCoupon) {
@@ -133,6 +153,7 @@ const handleOrderCompletion = asyncErrorWrapper(async (listCartItem, order) => {
         redeemedCoupon.status = 0;
         await redeemedCoupon.save();
     }
+
 });
 
 
@@ -151,9 +172,9 @@ const generateOrderCode = () => {
 
 const handleUpdateOrderStatus = asyncErrorWrapper(async (orderCode, status) => {
     const order = await getOrderByCode(orderCode);
-    if(order){
+    if (order) {
         order.status = status;
-        await order.save(); 
+        await order.save();
     }
 });
 
@@ -184,7 +205,7 @@ exports.createOrderWithZaloPay = asyncErrorWrapper(async (listCartItem, order, u
 
 
 
-exports.monitorZaloPayOrderStatus = asyncErrorWrapper(async (app_trans_id) => {
+exports.monitorZaloPayOrderStatus = asyncErrorWrapper(async (userId, app_trans_id) => {
     const orderId = app_trans_id.split('_')[1];
 
     const checkInterval = 30000; // Kiểm tra mỗi 30 giây
@@ -196,10 +217,18 @@ exports.monitorZaloPayOrderStatus = asyncErrorWrapper(async (app_trans_id) => {
         try {
             const result = await createZaloPayRequest.checkZaloPayOrderStatus(app_trans_id);
 
-            console.log("Checking zalopay order status: ",result.return_code);
+            console.log("Checking zalopay order status: ", result.return_code);
 
             if (result.return_code === 1) {
                 await handleUpdateOrderStatus(orderId, 1);
+                
+                await sendUserNotification(     //order success => send notification
+                    {
+                        id_user: userId,
+                        title: 'Đặt hàng thành công!', 
+                        content: `Cảm ơn sự ủng hộ của bạn! Đơn hàng #${orderId} đã được Medimate chuẩn bị và đang trên đường đến bạn.`
+                    }
+                );
                 return result.return_code;
             } else if (result.return_code === 2) {
                 await handleUpdateOrderStatus(orderId, 0);
@@ -212,16 +241,16 @@ exports.monitorZaloPayOrderStatus = asyncErrorWrapper(async (app_trans_id) => {
             }
         } catch (error) {
             console.error(`Error checking ZaloPay order status for order ${orderId}:`, error);
-            await handleUpdateOrderStatus(orderId, 0); 
+            await handleUpdateOrderStatus(orderId, 0);
         }
 
     };
 
-    return await performCheck(); 
+    return await performCheck();
 });
 
 
-exports.monitorMoMoOrderStatus = asyncErrorWrapper(async (partnerCode,requestId,orderId) => {
+exports.monitorMoMoOrderStatus = asyncErrorWrapper(async (userId, partnerCode, requestId, orderId) => {
 
     const checkInterval = 30000; // Kiểm tra mỗi 30 giây
     const maxDuration = 15 * 60 * 1000; // 15 phút
@@ -230,31 +259,44 @@ exports.monitorMoMoOrderStatus = asyncErrorWrapper(async (partnerCode,requestId,
     const performCheck = async () => {
 
         try {
-            const result = await createMomoRequest.checkMoMoOrderStatus(partnerCode,requestId,orderId);
+            const result = await createMomoRequest.checkMoMoOrderStatus(partnerCode, requestId, orderId);
 
-            console.log("Checking momo order status: ",result.resultCode);
+            console.log("Checking momo order status: ", result.resultCode);
 
-            if (result.resultCode === 0 || result.resultCode === 9000)  { 
+            if (result.resultCode === 0 || result.resultCode === 9000) {
                 //success
                 await handleUpdateOrderStatus(orderId, 1);
+                await sendUserNotification(  //order success => send notification
+                    {
+                        id_user: userId,
+                        title: 'Đặt hàng thành công!', //title
+                        content: `Cảm ơn sự ủng hộ của bạn! Đơn hàng #${orderId} đã được Medimate chuẩn bị và đang trên đường đến bạn.`
+                    }
+                );
                 return result.resultCode;
-            } else if ((result.resultCode === 1000 || result.resultCode === 7000) && Date.now() - startTime < maxDuration) { 
+            } else if ((result.resultCode === 1000 || result.resultCode === 7000) && Date.now() - startTime < maxDuration) {
                 //pending
                 setTimeout(performCheck, checkInterval);
-            } else { 
+            } else {
                 // failed
                 await handleUpdateOrderStatus(orderId, 0);
                 return result.resultCode;
             }
         } catch (error) {
             console.error(`Error checking MoMo order status for order ${orderId}:`, error);
-            await handleUpdateOrderStatus(orderId, 0); 
+            await handleUpdateOrderStatus(orderId, 0);
         }
 
     };
 
-    return await performCheck(); 
+    return await performCheck();
 });
+
+
+const sendUserNotification = async ({ id_user, title, content }) => {
+    const image = 'https://cdni.iconscout.com/illustration/premium/thumb/order-confirmation-5365232-4500195.png'; //example image
+    await notificateService.sendUserNotification({ id_user, title, content, image });
+};
 
 
 

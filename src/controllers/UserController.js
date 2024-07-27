@@ -16,3 +16,9 @@ exports.updateUser = asyncErrorHandler(async (req, res, next) => {
     await UserService.updateUser(userId, userUpdate);
     res.status(204).end();
 });
+
+exports.checkPhoneNumberAlreadyExists = asyncErrorHandler(async (req, res, next) => {
+    const phoneNumber = req.body.phoneNumber;
+    const isAlreadyExists = await UserService.checkPhoneNumberAlreadyExists(phoneNumber);
+    res.status(200).json(isAlreadyExists);
+});

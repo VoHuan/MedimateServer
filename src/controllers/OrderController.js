@@ -94,15 +94,17 @@ exports.handleCallbackZaloPayServer = asyncErrorHandler(async (req, res, next) =
 
 
 exports.checkZaloPayOrderStatus = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user.id;
     const app_trans_id = req.params.app_trans_id;
-    const result = await orderService.monitorZaloPayOrderStatus(app_trans_id);
+    const result = await orderService.monitorZaloPayOrderStatus(userId, app_trans_id);
     return res.status(200).json({orderStatus: result});
 });
 
 
 exports.checkMoMoPayOrderStatus = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user.id;
     const {partnerCode, requestId, orderId} = req.query;
-    const result = await orderService.monitorMoMoOrderStatus(partnerCode, requestId, orderId);
+    const result = await orderService.monitorMoMoOrderStatus(userId, partnerCode, requestId, orderId);
     return res.status(200).json({orderStatus: result});
 });
 

@@ -8,4 +8,8 @@ router.route('/')
     .get(authController.protect, userController.getUser)
     .patch(authController.protect, userController.updateUser)
 
-module.exports = router;
+
+router.route('/check-phone-number')
+    .post( userController.checkPhoneNumberAlreadyExists)
+
+module.exports = router;    
