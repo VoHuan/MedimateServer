@@ -20,7 +20,7 @@ const Order = sequelize.define('Order', {
     field: 'id_redeemed_coupon'
   },
   code: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   paymentMethod: {

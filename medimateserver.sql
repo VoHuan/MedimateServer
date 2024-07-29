@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 29, 2024 at 11:21 AM
+-- Generation Time: Jul 29, 2024 at 11:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -1577,8 +1577,8 @@ INSERT INTO `unit` (`id`, `name`, `description`, `status`) VALUES
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
-  `phone` text DEFAULT NULL,
-  `email` text DEFAULT NULL,
+  `phone` varchar(10) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `username` text DEFAULT NULL,
   `rank` varchar(20) NOT NULL DEFAULT '''Đồng''',
@@ -12330,8 +12330,8 @@ ALTER TABLE `unit`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`) USING HASH,
-  ADD UNIQUE KEY `phone` (`phone`) USING HASH;
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `phone` (`phone`);
 
 --
 -- Indexes for table `ward`

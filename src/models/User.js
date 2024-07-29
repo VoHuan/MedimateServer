@@ -16,7 +16,7 @@ const User = sequelize.define('User', {
     defaultValue: 'user',
   },
   phone: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     defaultValue: null,
     unique: true,
     validate: {
@@ -28,7 +28,7 @@ const User = sequelize.define('User', {
     }
   },
   email: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     defaultValue: null,
     unique: true,
     validate: {
@@ -58,11 +58,11 @@ const User = sequelize.define('User', {
     }
   },
   username: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     defaultValue: null,
   },
   rank: {
-    type: DataTypes.TEXT,
+    type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'Đồng',
   },
