@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 29, 2024 at 11:01 AM
+-- Generation Time: Jul 29, 2024 at 11:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -971,7 +971,7 @@ INSERT INTO `notification` (`id`, `id_user`, `title`, `content`, `createAt`, `im
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
-  `code` text NOT NULL,
+  `code` varchar(20) NOT NULL,
   `id_redeemed_coupon` int(11) NOT NULL,
   `payment_method` text NOT NULL,
   `total_coupon_discount` int(11) NOT NULL,
@@ -12271,7 +12271,7 @@ ALTER TABLE `notification`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`) USING HASH,
+  ADD UNIQUE KEY `code` (`code`),
   ADD KEY `fk_order_user` (`id_user`);
 
 --
