@@ -23,6 +23,11 @@ app.use(bodyParser.json());
 //Routes init
 route(app);
 
+//test domain
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
+
 //Global Error Handling Middleware
 app.use(globalErrorHandler);
 
