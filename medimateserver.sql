@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 29, 2024 at 10:06 AM
+-- Generation Time: Jul 29, 2024 at 11:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -1581,11 +1581,11 @@ CREATE TABLE `user` (
   `email` text DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `username` text DEFAULT NULL,
-  `rank` text NOT NULL DEFAULT 'Đồng',
+  `rank` varchar(20) NOT NULL DEFAULT '''Đồng''',
   `point` int(11) NOT NULL DEFAULT 0,
   `birthday` date DEFAULT NULL,
   `gender` int(11) DEFAULT NULL,
-  `role` text DEFAULT 'user',
+  `role` varchar(50) DEFAULT '''user''',
   `image` text DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `passwordChangedAt` datetime NOT NULL
