@@ -62,12 +62,12 @@ exports.handleCallbackMoMoServer = asyncErrorHandler(async (req, res, next) => {
 
 exports.createOrderWithZaloPay = asyncErrorHandler(async (req, res, next) => {
 
-    const { id: userId, username: userName } = req.user;
+    let { id: userId, username: userName } = req.user;
     const { listCartItem, order } = req.body;
 
     if(!userName)
         userName = 'user#'+userId;
-    
+
     order.userId = userId;
 
     const result = await orderService.createOrderWithZaloPay(listCartItem, order, userName);
