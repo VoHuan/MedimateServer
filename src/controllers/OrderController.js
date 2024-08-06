@@ -66,7 +66,7 @@ exports.createOrderWithZaloPay = asyncErrorHandler(async (req, res, next) => {
     const { listCartItem, order } = req.body;
 
     if(!userName)
-        userName = 'user#'+userId;
+        userName = 'user#' + userId;
 
     order.userId = userId;
 
