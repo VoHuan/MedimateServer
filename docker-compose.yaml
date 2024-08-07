@@ -1,14 +1,10 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: vohuan0404/medimateserver:v1.0
     ports:
       - "3000:3000"
-    volumes:
-      - .:/usr/src/app
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=123456
@@ -17,7 +13,7 @@ services:
       - db
 
   db:
-    image: mysql:8.0
+    image: vohuan0404/medimateserver-mysql-database:v1.0
     ports:
       - "3306:3306"
     environment:
