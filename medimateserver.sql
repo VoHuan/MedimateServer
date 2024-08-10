@@ -1608,11 +1608,11 @@ CREATE TABLE `user` (
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `username` text DEFAULT NULL,
-  `rank` varchar(20) NOT NULL DEFAULT '''Đồng''',
+  `rank` varchar(20) NOT NULL DEFAULT 'Đồng',
   `point` int(11) NOT NULL DEFAULT 0,
   `birthday` date DEFAULT NULL,
   `gender` int(11) DEFAULT 1,
-  `role` varchar(50) DEFAULT '''user''',
+  `role` varchar(50) DEFAULT 'user',
   `image` text DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `passwordChangedAt` datetime NOT NULL
