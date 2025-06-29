@@ -63,13 +63,13 @@ exports.createOrderWithCOD = asyncErrorWrapper(async (listCartItem, order) => {
     }
 
     //order success => send notification
-    await sendUserNotification(     
-        {
-            id_user: order.userId,
-            title: 'Đặt hàng thành công!', 
-            content: `Cảm ơn sự ủng hộ của bạn! Đơn hàng với ${listCartItem.length} sản phẩm đang trên đường đến bạn.`
-        }
-    );
+    // await sendUserNotification(     
+    //     {
+    //         id_user: order.userId,
+    //         title: 'Đặt hàng thành công!', 
+    //         content: `Cảm ơn sự ủng hộ của bạn! Đơn hàng với ${listCartItem.length} sản phẩm đang trên đường đến bạn.`
+    //     }
+    // );
 
     return newOrder;
 });
@@ -95,6 +95,7 @@ exports.createOrderWithMoMo = asyncErrorWrapper(async (listCartItem, order) => {
     if (newOrder) {
         await handleOrderCompletion(listCartItem, newOrder);  //Process data related to orders : cart, point, coupon, ...
     }
+    console.log(result)
     return result;
 });
 
