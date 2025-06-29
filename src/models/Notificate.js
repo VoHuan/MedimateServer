@@ -24,7 +24,7 @@ const Notificate = sequelize.define('Notificate', {
     createAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Date.now(),
+        defaultValue: sequelize.NOW,
     },
     image: {
         type: DataTypes.STRING,
