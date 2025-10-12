@@ -4,6 +4,9 @@ Backend for Medimate mobile e-commerce app
 
 This repository contains the Node.js/Express backend for the Medimate mobile e-commerce application. It provides REST APIs for products, carts, authentication, users, addresses, orders, coupons, notifications and payment integrations (MoMo, ZaloPay). The project uses Sequelize for MySQL integration and Firebase for push notifications.
 
+## Demo
+Video Demo : https://www.youtube.com/watch?v=ulZXAta88dc
+
 ## Table of contents
 
 - Features
